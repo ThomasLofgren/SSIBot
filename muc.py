@@ -50,9 +50,12 @@ class MUCBot(sleekxmpp.ClientXMPP):
             urlFull = urlFull + '&resturant=' + resturant
         urlFull += '&dag=' + day
         req = requests.get(urlFull)
-        obj = json.loads(req.text)
-        retval = 'Vecka: ' + obj['vecka'] + ' dag: ' + obj['dag'] + '\n'
-        retval += ''.join('\n {0:10}: {1}'.format(rest['restuarang'], rest['meny']) for rest in obj['restuaranger'])
+        if (len(req.text.strip()) > 0):
+            obj = json.loads(req.text)
+            retval = 'Vecka: ' + obj['vecka'] + ' dag: ' + obj['dag'] + '\n'
+            retval += ''.join('\n {0:10}: {1}'.format(rest['restuarang'], rest['meny']) for rest in obj['restuaranger'])
+        else:
+            retval = "Det är en hemlis!"
         return retval
 
     def get_Help(self) :
