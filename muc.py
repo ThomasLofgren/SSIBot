@@ -22,12 +22,12 @@ def utf8text(text):
     return text.encode('raw_unicode_escape').decode('utf-8')
 
 class MUCBot(sleekxmpp.ClientXMPP):
-    
+
     week_number = 0
     lastWeek = "0"
     url = 'http://hador.syntronic.se/cgi-bin/tallriksskrapan.py'
+    switchHost = "10.8.1.202";
 
-    
     def lunch(self, args):
         parse_vecka()
         print("\n" +
@@ -66,10 +66,18 @@ class MUCBot(sleekxmpp.ClientXMPP):
         retval += "ssibot <all> <veckodag>\t\t\t\tVisar alla resturangers meny för <veckodag>\n"
         retval += "ssibot <resturangnamn>\t\t\t\tVisar <resturangnamn> meny på fredag\n"
         retval += "ssibot <veckodag> <resturangnamn>\tVisar <resturangnamn> meny på <veckodag>\n"
+        retval += "ssibot trophy <on|off>\t\t\t\t\t\tSlå på eller av luftcirkulationen\n"
         retval += "ssibot help\t\t\t\t\t\tVisar denna hjälp\n\n"
         return retval
 
-
+    def trophyControl(self, cmd):
+        switchUrl = "http://" + self.switchHost + "/k1" + (cmd == "on" and "10" or "01") + "00"
+        try:
+            requests.get(switchUrl, timeout=5)
+            response = "Luftcirkulation " + (cmd == "on" and "på" or "av")
+        except:
+            response = "Apparat urkopplad"
+        return response
 
     """
     A simple SleekXMPP bot that will greets those
@@ -155,6 +163,8 @@ class MUCBot(sleekxmpp.ClientXMPP):
             if(len(mess) > 1):
                 if (mess[1] == "help"):
                     response = self.get_Help()
+                elif (mess[1] == "trophy" and len(mess) > 2):
+                    response = self.trophyControl(mess[2])
                 else:
                     day = "fredag"
                     rest = "all"
