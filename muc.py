@@ -163,8 +163,11 @@ class MUCBot(sleekxmpp.ClientXMPP):
             if(len(mess) > 1):
                 if (mess[1] == "help"):
                     response = self.get_Help()
-                elif (mess[1] == "trophy" and len(mess) > 2):
-                    response = self.trophyControl(mess[2])
+                elif (mess[1] == "trophy"):
+                    if (len(mess) > 2):
+                        response = self.trophyControl(mess[2])
+                    else:
+                        response = "Va?"
                 else:
                     day = "fredag"
                     rest = "all"
